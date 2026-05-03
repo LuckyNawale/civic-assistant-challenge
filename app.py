@@ -6,8 +6,7 @@ from dotenv import load_dotenv
 
 # LangChain & Gemini
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain.prompts import PromptTemplate
-from langchain.chains import LLMChain
+from langchain_core.prompts import PromptTemplate
 
 # Google Calendar (using googleapiclient)
 from googleapiclient.discovery import build
@@ -202,9 +201,7 @@ User Question: {question}
 Answer:
 """
         )
-        
-        chain = LLMChain(llm=llm, prompt=prompt_template)
-        
+        chain = prompt_template | llm
         user_question = st.text_input("Enter your question here:", placeholder="e.g., How do I register to vote?")
         
         if st.button("Ask Oracle"):
@@ -215,9 +212,9 @@ Answer:
                     try:
                         # Sanitize input (basic whitespace stripping)
                         sanitized_question = user_question.strip()
-                        response = chain.run(question=sanitized_question)
+                        response = chain.invoke({"question": sanitized_question})
                         st.success("Response:")
-                        st.write(response)
+                        st.write(response.content)
                     except Exception as e:
                         st.error(f"An error occurred: {e}")
 
