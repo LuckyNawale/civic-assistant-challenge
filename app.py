@@ -32,9 +32,9 @@ def get_llm():
     if not api_key or api_key == "YOUR_GOOGLE_API_KEY_HERE":
          return None
     
-    # Use gemini-1.5-flash to avoid the 404 NOT_FOUND error on old deprecated models
+    # Use gemini-2.5-flash as the older 1.5 models are deprecated and cause 404 errors
     return ChatGoogleGenerativeAI(
-        model="gemini-1.5-flash",
+        model="gemini-2.5-flash",
         google_api_key=api_key,
         temperature=0.0 # Low temperature for factual consistency
     )
