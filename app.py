@@ -18,7 +18,7 @@ load_dotenv()
 st.set_page_config(
     page_title="Civic Assistant",
     page_icon="🗳️",
-    layout="centered"
+    layout="wide"
 )
 
 # ==========================================
@@ -46,10 +46,10 @@ def fetch_election_dates() -> pd.DataFrame:
     """
     today = datetime.now()
     events = [
-        {"title": "Registration Deadline", "date": (today + timedelta(days=15)).strftime("%B %d, %Y"), "description": "Last day to register to vote for the upcoming general election. Make sure to bring your proof of residence if registering in person."},
-        {"title": "Early Voting Begins", "date": (today + timedelta(days=20)).strftime("%B %d, %Y"), "description": "Polling locations open for early in-person voting. Bring a valid photo ID."},
-        {"title": "Mail-in Ballot Request Deadline", "date": (today + timedelta(days=25)).strftime("%B %d, %Y"), "description": "Last day to request an absentee or mail-in ballot. You can request this online or via your local election office."},
-        {"title": "Election Day", "date": (today + timedelta(days=35)).strftime("%B %d, %Y"), "description": "General Election Day. Polls are open from 7 AM to 8 PM. If you are in line by 8 PM, you are allowed to vote."}
+        {"title": "Voter Registration Deadline", "date": (today + timedelta(days=15)).strftime("%B %d, %Y"), "description": "Last day to register to vote or update details on the National Voters' Service Portal (NVSP). Make sure to keep your address proof ready."},
+        {"title": "Release of Final Electoral Roll", "date": (today + timedelta(days=20)).strftime("%B %d, %Y"), "description": "The final voter list is published. Check your name and Polling Station details online."},
+        {"title": "Distribution of Voter Slips", "date": (today + timedelta(days=25)).strftime("%B %d, %Y"), "description": "Booth Level Officers (BLOs) begin distributing official Voter Information Slips to your registered address."},
+        {"title": "Polling Day", "date": (today + timedelta(days=35)).strftime("%B %d, %Y"), "description": "Election Day. Polling booths are typically open from 7 AM to 6 PM. Bring your EPIC (Voter ID) or an approved alternative photo ID."}
     ]
     return pd.DataFrame(events)
 
@@ -63,10 +63,10 @@ def generate_voter_checklist(first_time: str, vote_method: str) -> list:
         checklist.append("Bring a valid form of photo ID (often required for first-time voters).")
         checklist.append("Review a sample ballot online before heading out.")
     
-    if vote_method == "Absentee" or vote_method == "Mail-in":
-        checklist.append("Request your absentee/mail-in ballot before the deadline.")
-        checklist.append("Read instructions carefully for signing and sealing the envelope.")
-        checklist.append("Mail the ballot early, or drop it off at an official secure dropbox.")
+    if vote_method == "Postal Ballot (Senior Citizens/PwD/Essential Services)":
+        checklist.append("Submit Form 12D to the Returning Officer within 5 days of election notification.")
+        checklist.append("Ensure your mobile number is registered for updates.")
+        checklist.append("Be available at your home when the polling team arrives for at-home voting.")
     else:
         checklist.append("Check the polling hours and plan what time you will vote.")
     
@@ -97,7 +97,7 @@ def main():
     st.write("Answer a few quick questions to get your customized to-do list.")
     
     is_first_time = st.radio("Are you a first-time voter?", ("Yes", "No"))
-    vote_method = st.selectbox("How do you plan to vote?", ("In-person", "Absentee", "Mail-in"))
+    vote_method = st.selectbox("How do you plan to vote?", ("Standard In-person (EVM)", "Postal Ballot (Senior Citizens/PwD/Essential Services)"))
     
     if st.button("Generate My Checklist"):
         checklist = generate_voter_checklist(is_first_time, vote_method)
@@ -122,7 +122,7 @@ def main():
     prompt_template = PromptTemplate(
         input_variables=["question"],
         template="""
-You are the "Civic Oracle", an expert, strictly neutral, and helpful assistant focused ONLY on the mechanics and processes of elections and voting in the United States.
+You are the "Civic Oracle", an expert, strictly neutral, and helpful assistant focused ONLY on the mechanics and processes of elections and voting in India, managed by the Election Commission of India (ECI).
 
 STRICT RULES:
 1. You MUST NOT mention, endorse, criticize, or discuss any specific political candidate, public figure, political party, or specific legislation/policy.
